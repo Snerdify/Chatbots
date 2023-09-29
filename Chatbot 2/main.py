@@ -94,16 +94,18 @@ def remove_from_order(session_id:str, parameters:dict):
 
     
     
-
-
-
-
 def track_order(session_id:str , parameters:dict):
     # to track the order , we need to extract the id from the parameters
     order_id = int(parameters['order_id'])
-
-    
-    return f"Tracking order for session {session_id}"
+# we retrieve the status of the order given the order id
+    order_status = db_helper.get_order_status(order_id)
+    if order_status:
+        fullfillment_text = f"The order status for {order_id} is : {order_status}"
+    else:
+        fullfillment_text = f"No order found with order id :{order_id}"
+    return JSONResponse(content={
+        "fullfillmentText" : fullfillment_text
+    })
 
 
 
