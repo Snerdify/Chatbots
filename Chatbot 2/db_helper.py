@@ -56,8 +56,23 @@ def get_total_order_price():
 def get_next_order_id():
     return ""
 
-def get_order_status():
-    return ""
+
+
+# we need to get the status of an order from sql db , provided that we have an order id
+def get_order_status(order_id):
+    cursor= cnx.cursor()
+    query= f"SELECT status FROM order_tracking WHERE order_id={order_id}"
+    cursor.execute(query)
+    # method to retrieve the first row of the query result.
+    result = cursor.fetchone()
+    # closing the cursor is necessary to release db resources
+    cursor.close()
+    # return the order status
+    if result:
+        # if the query has a positive match then , return the 1st element of the result
+        return result[0]
+    else:
+        return None
 
 if __name__ == "__main__" : 
 
