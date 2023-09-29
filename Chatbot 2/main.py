@@ -9,16 +9,12 @@ inprogress_orders = {}
 
 
 # session id : session id associated with user's ongoing conversation.
-
-
 def add_to_order(session_id:str, parameters: dict):
     # parameters contains info about user's request , 
     # here , it contains the food items and quantities , that are to be added to the order
     # below are the food-items and numbers associated with user's request
     food_items = parameters["food-item"]
     quantities = parameters["number"]
-
-
 # list of food_items and list of quatities should be the same , 
 # if not we assume that user didnt provide a quantity for a food item
     if len(food_items) !=len(quantities):
@@ -49,17 +45,75 @@ def add_to_order(session_id:str, parameters: dict):
 
 
 
+
 def remove_from_order(session_id:str, parameters:dict):
-    #logic 
+    # to remove something from an order , the order must be already initiated
+    # i.e the order must already be present in the existing orders
+    if session_id not in inprogress_orders:
+        return JSONResponse(content={
+            "fullfillmentText": "Im having trouble finding your order , could you please start a new order"
+        })
+    # if the order is present in inprogress orders then , get user's info
+    # here we get food_items that are to be removed  and the session_id of that order
+    food_items= parameters["food_item"]
+    current_order = inprogress_orders[session_id]
+    # initialize two empty dicts , one for populating all the items user removes
+    # another one for items that are not present in the current order list
+    removed_items = []
+    no_such_items = []
+    # now we know that food_items here is a list that contains all the preexisting items that are present in the user's list
+    # so if user requests to remove an item that is not present in the food_items then ,
+    # send a msg that such item is not in the list , hence user cant remove it
+    for item in food_items:
+        if item not in food_items:
+            no_such_items.append(item)
+        else:
+            removed_items.append(item)
+            del current_order[item]
+
+# if the items were successfully removed then , send a fullfillment text
+    if len(removed_items) > 0 :
+        fullfillment_text = f'Removed {",".join(removed_items)} from your order'
+# when user wants to remove an item that is not present in the current order list
+    if len(no_such_items)>0:
+        fullfillment_text = f'Your current order does not have {",".join(no_such_items)}'
+
+# if the current order has been started by the user but nothinh has been added yet
+    if len(current_order.keys())==0:
+        fullfillment_text += "Nothing has been added yet"
+    else:
+        order_str= generic_helper.get_str_from_food_dict(current_order)
+        fullfillment_text += f"Your order currently contains :{order_str}"
+
+    return JSONResponse(content={
+        "fullfillmentText" : fullfillment_text
+    })
+
+
+
+
+    
     return f"Removing order for session{session_id}"
+
+
+
 
 def track_order(session_id:str , parameters:dict):
     #logic
     return f"Tracking order for session {session_id}"
 
 
+
+
 def complete_order(session_id:str, parameters:dict):
     return f"Order completed"
+
+
+
+
+
+
+
 
 
 
