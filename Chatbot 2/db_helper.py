@@ -47,8 +47,15 @@ def insert_order_item(food_item, quantity, order_id):
         return -1
 
 
-def insert_order_tracking():
-    return ""
+
+# this function is used to add a new record into order_tracking table.
+def insert_order_tracking(order_id, status):
+    cursor = cnx.cursor()
+    # insert value in the order_tracking table
+    insert_query= "INSERT INTO order_tracking (order_id, status) VALUES (%s,%s)"
+    cursor.execute(insert_query , (order_id , status))
+    cnx.commit()
+    cursor.close()
 
 def get_total_order_price():
     return ""
