@@ -7,6 +7,9 @@ app = FastAPI()
 inprogress_orders = {}
 
 
+def save_to_db(order:dict):
+    return ""
+
 
 # session id : session id associated with user's ongoing conversation.
 def add_to_order(session_id:str, parameters: dict):
@@ -111,10 +114,30 @@ def track_order(session_id:str , parameters:dict):
 
  
 def complete_order(session_id:str, parameters:dict):
-    return f"Order completed"
+    if session_id not in inprogress_orders:
+        fullfillment_text=f"Sorry couldn't fetch your order.Can you please place a new order."
+    else:
+        order = inprogress_orders[session_id]
+        # since the order is available and is in progress
+        # we can use the save_to_db function to fetch the order_id of that order
+        order_id= save_to_db(order)
+# order_id = -1 typically indicates the failure in saving the order to the db
+# or could be a failure in fetching the order_id
+        if order_id == -1 :
+            fullfillment_text= f"Sorry, Couldn't process your order due to a backend error,please place a new order"
+        else:
+            # if the id is found in the database
+            # then prepare the order total for the user
+            order_total = db_helper.get_total_order_price(order_id)
+            fullfillment_text = f"Excellent! your order is in progress."\
+                                f"This is your order_id #{order_id}" \
+                                f"Your bill is {order_total}"
+# this indicates that the order is no longer in progress.
+        del(inprogress_orders[session_id])
 
-
-
+        return JSONResponse(content={
+            "fullfillmentText":fullfillment_text
+        })
 
 
 
