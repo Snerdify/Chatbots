@@ -57,11 +57,35 @@ def insert_order_tracking(order_id, status):
     cnx.commit()
     cursor.close()
 
-def get_total_order_price():
-    return ""
 
+# fetch the total price of a specific order from the database 
+def get_total_order_price(order_id):
+    cursor=cnx.cursor()
+    query = f"SELECT get_total_order_price({order_id})"
+    cursor.execute(query)
+    result= cursor.fetchone()[0]
+    return result
+
+
+
+
+
+# could be mainly used to generate order_id for the new item
+# also could be used to retrieve the next order id in the db
 def get_next_order_id():
-    return ""
+    cursor = cnx.cursor
+    # MAX is an aggregate value in SQL. we want to get the max value of the order_id from the orders table
+    # we need to select the max order_id in the orders table to get a unique identifier to be 
+    # most of the times order ids are arranged in sequential manners, so getting the max order id refers to getting the 
+    # id of the latest order.
+    query= "SELECT MAX(order_id) FROM orders"
+    cursor.execute(query)
+    result = cursor.fetchone()[0]
+    cursor.close()
+    if result is None:
+        return 1
+    else:
+        return result+1
 
 
 
@@ -80,6 +104,8 @@ def get_order_status(order_id):
         return result[0]
     else:
         return None
+
+
 
 if __name__ == "__main__" : 
 
