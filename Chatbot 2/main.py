@@ -1,7 +1,7 @@
 from fastapi import FastAPI , Request
 from fastapi.responses import JSONResponse
 import generic_helper
-
+import db_helper
 app = FastAPI()
 
 inprogress_orders = {}
@@ -93,18 +93,21 @@ def remove_from_order(session_id:str, parameters:dict):
 
 
     
-    return f"Removing order for session{session_id}"
+    
 
 
 
 
 def track_order(session_id:str , parameters:dict):
-    #logic
+    # to track the order , we need to extract the id from the parameters
+    order_id = int(parameters['order_id'])
+
+    
     return f"Tracking order for session {session_id}"
 
 
 
-
+ 
 def complete_order(session_id:str, parameters:dict):
     return f"Order completed"
 
