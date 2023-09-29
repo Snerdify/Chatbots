@@ -7,8 +7,28 @@ app = FastAPI()
 inprogress_orders = {}
 
 
+# function responsible for saving the entire order+individual items+ tracking status to the databse
+
 def save_to_db(order:dict):
-    return ""
+    # for saving an order , we first need an order id , so get the latest order_id
+    next_order_id = db_helper.get_next_order_id()
+    # iterate through every item in the order , and look for two paramters :food_item and quantity
+    for food_item , quantity in order.items():
+        store = db_helper.insert_order_item(
+            food_item,
+            quantity,
+            next_order_id
+        )
+        if store==-1:
+            return -1
+        
+# save the tracking status of the order to the database
+    db_helper.insert_order_tracking(next_order_id, "in progress")
+# we return the next order id to confirm that the order has been successfully stored in the db
+# we can call next_order_id as a refernce to newly saved order. 
+    return next_order_id
+
+
 
 
 # session id : session id associated with user's ongoing conversation.
