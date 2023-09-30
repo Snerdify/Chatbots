@@ -18,8 +18,12 @@ def extract_session_id(session_str : str):
         # if the session_id is found within the string , 
         # i.e if the match is found , then extract the entire matched string and store it in the variable called 
         # extracted_string
-        extracted_string = match.group(0)
+        extracted_string = match.group(1)
         return extracted_string
     # if no match is found then return an empty string
     return ""
+
+# to test the func
+if __name__ == "__main__":
+    print(get_str_from_food_dict)
     

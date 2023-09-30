@@ -78,8 +78,9 @@ def remove_from_order(session_id:str, parameters:dict):
         })
     # if the order is present in inprogress orders then , get user's info
     # here we get food_items that are to be removed  and the session_id of that order
-    food_items= parameters["food_item"]
     current_order = inprogress_orders[session_id]
+    food_items= parameters["food_item"]
+    
     # initialize two empty dicts , one for populating all the items user removes
     # another one for items that are not present in the current order list
     removed_items = []
@@ -103,7 +104,7 @@ def remove_from_order(session_id:str, parameters:dict):
 
 # if the current order has been started by the user but nothinh has been added yet
     if len(current_order.keys())==0:
-        fullfillment_text += "Nothing has been added yet"
+        fullfillment_text += "Your order is empty"
     else:
         order_str= generic_helper.get_str_from_food_dict(current_order)
         fullfillment_text += f"Your order currently contains :{order_str}"
