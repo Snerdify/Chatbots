@@ -1,6 +1,7 @@
 from fastapi import FastAPI , Request
 from fastapi.responses import JSONResponse
 import generic_helper
+from fastapi.middleware.cors import CORSMiddleware
 import db_helper
 app = FastAPI()
 
@@ -185,6 +186,15 @@ async def handle_request(request: Request):
         'track.order - context: ongoing-tracking': track_order
     }
 
+origins =[
+    "http://localhost:8000",
+    "http://localhost:8080"
+]
 
-
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],  # You can specify HTTP methods (e.g., ["GET", "POST"])
+    allow_headers=["*"],  # You can specify allowed headers
+)
